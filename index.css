@@ -1,0 +1,43 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: rgb(31, 29, 29);
+    color: white;
+}
+.game-title {
+    text-align: center;
+    font-size: 3em;
+    font-family: 'Gugi', cursive;
+}
+.score-wrapper {
+    width: 37.5em;
+    height: 3em;
+    margin: 2em auto 0;
+    display: flex;
+    font-family: 'Gugi', cursive;
+}
+.score-title-wrapper {
+    width: 30%;
+    font-size: 1.7em;
+    line-height: 2em;
+}
+.score-number-wrapper {
+    width: 70%;
+    font-size: 2em;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    line-height: 1.4em;
+}
+.score-number {
+    height: 100%;
+    width: 14%;
+}
+#game-canvas {
+    background: lightgrey;
+    display: block;
+    margin: 0em auto;
+}
