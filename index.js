@@ -1691,7 +1691,8 @@ function translateZ(cT, sT){
 
 /*middle man between change shape input and function*/
 function translateShape(myCurrentTetris){
-    if(myCurrentTetris.type == "O"){
+    //we don't pass anything if it's and O type
+    if(myCurrentTetris.type == "I"){
         translateI(myCurrentTetris, store);
     }else if (myCurrentTetris.type == "T"){
         translateT(myCurrentTetris, store);
