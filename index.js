@@ -1,6 +1,6 @@
 //things should be fix 
 // 1.   check if it's have a row, if it's , then everything from that row up, will fall down one block (50 px)  (done)
-// 2.   check flip, sometime it's not working (fixed)
+// 2.   check flip, sometime it's not working (done)
 // 3.   when you reach the top, stop, lose (done)
 // 3.5  and score update (done)
 // 3.8  update score in the HTML to match the actual score (done)
@@ -11,12 +11,14 @@
 // 7. add you lose (done)
 
 var store = [];
-var currentTetris =  {"type":"O","W": 50, "H": 50, "r": "box" , "W": 50, "H": 50, "x": 200 , "y":-100 , "x2":250 , "y2": -100 , "x3":200 , "y3":-50 , "x4":250 , "y4":-50};
+var currentTetris =   {"type":"I", "r": "vertical" , "W": 50, "H": 50, "x": 200 , "y":-200 , "x2":200 , "y2": -150 , "x3":200 , "y3":-100 , "x4":200 , "y4":-50};
 var nextTetris = null;
 var score =  0;
+
 let stopMovingForNow = false;
+
 let youLose = false;
-/*--score html---*/
+/*--score html DOM---*/
 let score_7 = document.querySelector(".js-7-number");
 let score_6 = document.querySelector(".js-6-number");
 let score_5 = document.querySelector(".js-5-number");
@@ -83,13 +85,14 @@ function drawShape(myCtx,x,y,x2,y2,x3,y3,x4,y4, w, h, c,s){
     myCtx.strokeRect(x4,y4,w,h);
 
 }
+//text say, NEXT
 function nextText(ctx, x,y, fontSize, fontName, textAlign){
     ctx.fillStyle = "black";
     ctx.font = `${fontSize}px ${fontName}`;
     ctx.textAlign = `${textAlign}`;
     ctx.fillText("Next", x, y)
 }
-
+//draw the next tetris shape
 function drawNextShape(myCtx, type){
     let arrayOfTetrisNext = [
         //I has 2 shapes: vertical and straight
@@ -126,6 +129,7 @@ function drawNextShape(myCtx, type){
         drawShape(myCtx, arrayOfTetrisNext[6].x,arrayOfTetrisNext[6].y, arrayOfTetrisNext[6].x2, arrayOfTetrisNext[6].y2, arrayOfTetrisNext[6].x3, arrayOfTetrisNext[6].y3, arrayOfTetrisNext[6].x4, arrayOfTetrisNext[6].y4, arrayOfTetrisNext[6].W, arrayOfTetrisNext[6].H, "white", "Z");
     }
 }
+//when lose draw
 function drawLose(myCtx){
     drawBoard(myCtx, 0, 250, 550, 150 ,"white");
     ctx.fillStyle = "red";
@@ -134,6 +138,7 @@ function drawLose(myCtx){
     ctx.fillText("You Lose! F5 to retry!", 280, 350 )
 }
 
+//draw to canvas
 function draw(myCtx, cT, sT, nT){
     myCtx.clearRect(0, 0, canvas.width, canvas.height);
     //w: 800
@@ -172,23 +177,21 @@ function draw(myCtx, cT, sT, nT){
     }
 }
 
-//call function
-randomShape(arrayOfTetris);
 
+//call function random
+randomShape(arrayOfTetris);
 
 /*-------functions--------*/
 function randomShape(myArrayOfTetris){
     let r = Math.floor(Math.random()* 7);
     let rId =Math.floor(Math.random()* 1000000);
-    let copyCat = myArrayOfTetris[r];
+    let copyCat = myArrayOfTetris[r] ;
     copyCat.id = rId;
     nextTetris = copyCat;
 }
 
 /*change shape functions*/
-function translateO(){
-    //I do nothing
-};
+//we dont need type 0 because it's a square
 function translateI(cT, sT){
 //we got a problem;
 //if y of x1 is at position that less than 500 yaxis
@@ -423,7 +426,6 @@ function translateI(cT, sT){
                 }
             }     
         }
-            
         if(!conflictBlock){
             if(cT.x > 300){
                 cT.x = 350;
@@ -1691,10 +1693,8 @@ function translateZ(cT, sT){
 
 /*middle man between change shape input and function*/
 function translateShape(myCurrentTetris){
-    //we don't pass anything if it's and O type
-    if(myCurrentTetris.type == "I"){
-        translateI(myCurrentTetris, store);
-    }else if (myCurrentTetris.type == "T"){
+    //we dont need type 0 because it's a square
+    if (myCurrentTetris.type == "T"){
         translateT(myCurrentTetris, store);
     }else if (myCurrentTetris.type == "J"){
         translateJ(myCurrentTetris, store);
@@ -1704,9 +1704,11 @@ function translateShape(myCurrentTetris){
         translateS(myCurrentTetris, store);
     }else if (myCurrentTetris.type == "Z"){
         translateZ(myCurrentTetris, store);
+    }else if (myCurrentTetris.type == "I"){
+        translateI(myCurrentTetris, store);
     }
 }
-
+//if found block on the left side, return true
 function checkBlockLeft(cT, sT,){
     for(let i = 0; i < 4; i++){
         if(i == 0){
@@ -1772,6 +1774,7 @@ function checkBlockLeft(cT, sT,){
         }
     }
 }
+//check shape and what on the left side of it
 function whatShapeAndMoveLeft(cT, sT){
     if(cT.type == "I"){
         let foundBlock = checkBlockLeft(cT, sT);
@@ -1970,6 +1973,7 @@ function whatShapeAndMoveLeft(cT, sT){
         }
     }
 }
+//if found block on the right side, return true
 function checkBlockRight(cT, sT){
     for(let i = 0; i < 4; i++){
         if(i == 0){
@@ -2035,7 +2039,7 @@ function checkBlockRight(cT, sT){
         }
     }
 }
-
+//check shape and what on the right side of it
 function whatShapeAndMoveRight(cT, sT){
     if(cT.type == "I"){
         let foundBlock = checkBlockRight(cT, sT);
@@ -2234,7 +2238,7 @@ function whatShapeAndMoveRight(cT, sT){
         }
     }
 }
-
+//listening to keystroke
 function listeningToMove(){
     document.addEventListener("keydown", function(e){
         if(e.keyCode == 39){
@@ -2245,17 +2249,14 @@ function listeningToMove(){
             whatShapeAndMoveLeft(currentTetris, store);
         }else if (e.keyCode == 38){
             //we call translateShape() here
-            if(!stopMovingForNow){
-                translateShape(currentTetris);
-            }
+            translateShape(currentTetris);
         }
     });
 }
-//move everything down 1 block
+
+//move everything down 1 block if score
 function scoreAndMoveDown(sT, yaxis){
-    //console.log("I eat!!!!")
     //now we loop through the array "sT"
-    //if every i of the sT
     //we run through the array to find anything that match, if found, delete the sT position out of the object
     //yaxis is the y that need to be delete
     for(let i = 0; i < sT.length; i++){
@@ -2316,46 +2317,41 @@ function scoreAndMoveDown(sT, yaxis){
     }
     score += 1000;
 }
-//check for 11 block score
+//check for 11 block to score
 function checkToScore(sT){
-    //console.log("check to score")
     //this function run specifically when the block hit the bottom or hit other block and stop and store into the store
-    let currentY = 700;
+    let currentY = null;
     let num = 0;
     //loop through each Y (every 50 pixels)
     if(sT.length >= 1){
-        for(let i = 700; i >= 0; i--){
-            //console.log("in loop i")
+        for(let i = 650; i >= 0; i-=50){
             //set "y" to current Iteraction "i"
             currentY = i;
-           
-            //[[121121, y2, y4, y5], [121121, y2, y4, y5]]
             for(let j = 0; j < sT.length; j++){
-                //console.log("in loop j", sT.length)
                 if(sT[j].y){
-                    if(sT[j].y == i){
+                    if(sT[j].y == currentY){
                         num += 1;
                      }
                 }
                 if(sT[j].y2){
-                    if(sT[j].y2 == i){
+                    if(sT[j].y2 == currentY){
                         num += 1;
                     }
                 }
                 if(sT[j].y3){
-                    if(sT[j].y3 == i){
+                    if(sT[j].y3 == currentY){
                         num += 1;
                     }
                 }
                 if(sT[j].y4){
-                    if(sT[j].y4 == i){
+                    if(sT[j].y4 == currentY){
                         num += 1;
                     }
                 }
             }
+            console.log("num:", num);
             //count number in the array         
             if(num == 11){
-                //console.log("in check 11")
                 //go through, destroy block, and add score
                 scoreAndMoveDown(sT, currentY);
                 return checkToScore(sT);
@@ -2365,17 +2361,14 @@ function checkToScore(sT){
             }
             //go next loop
         }
+       
     }
-    //end of the loop
-    //console.log("outside of loop")
 }
+
+//moving tetris shape down to hit the bottom
 function movingBlockDown(cT, sT){
-    //store to sT
-    //moving cT down
     if(cT.type == "I"){
-        //console.log("check for type: I")
         if(cT.r == "straight"){
-            //console.log("check for r: straight")
             let x = cT.x;
             let x2 = cT.x2;
             let x3 = cT.x3;
@@ -2386,7 +2379,7 @@ function movingBlockDown(cT, sT){
             let y3 = cT.y3;
             let y4 = cT.y4;
             //for loop through the sT
-            //in this 4 xs
+            //in this 4 x's
             //which one of this has the lowest number 
             let xResult = 700;
             let x2Result = 700;
@@ -2395,13 +2388,10 @@ function movingBlockDown(cT, sT){
             //loop 4 time because we want to find 4 result
 
             for(let i = 0 ; i < 4; i++){
-                //console.log("in for loop : i")
                 if(sT.length >= 1){
-                    //console.log("check length")
                     if (i == 0){
                         for(let j = 0 ; j < sT.length; j++){
-                            //console.log("for loop i == 0")
-                            // loop through all the sT and all xs
+                            // loop through all the sT and all x's
                             if(sT[j].x >= 0){
                                 if(sT[j].x == x && sT[j].y < xResult && sT[j].y > y){
                                     xResult = sT[j].y;
@@ -2423,12 +2413,10 @@ function movingBlockDown(cT, sT){
                                     xResult = sT[j].y4;
                                 } 
                             }
-                            
                         }
                     }else if (i == 1){
                         for(let j = 0 ; j < sT.length; j++){
-                            //console.log("for loop i == 1")
-                            // loop through all the sT and all xs
+                            // loop through all the sT and all x's
                             if(sT[j].x >= 0){
                                 if(sT[j].x == x2 && sT[j].y < x2Result && sT[j].y > y2){
                                     x2Result = sT[j].y;
@@ -2453,8 +2441,7 @@ function movingBlockDown(cT, sT){
                         }
                     }else if (i == 2){
                         for(let j = 0 ; j < sT.length; j++){
-                            //console.log("for loop i == 2")
-                            // loop through all the sT and all xs
+                            // loop through all the sT and all x's
                             if(sT[j].x >= 0){
                                 if(sT[j].x == x3 && sT[j].y < x3Result && sT[j].y > y3){
                                     x3Result = sT[j].y;
@@ -2479,8 +2466,7 @@ function movingBlockDown(cT, sT){
                         }
                     }else if (i == 3){
                         for(let j = 0 ; j < sT.length; j++){
-                            //console.log("for loop i == 3")
-                            // loop through all the sT and all xs
+                            // loop through all the sT and all x's
                             if(sT[j].x >= 0){
                                 if(sT[j].x == x4 && sT[j].y < x4Result && sT[j].y > y4){
                                     x4Result = sT[j].y;
@@ -2503,15 +2489,13 @@ function movingBlockDown(cT, sT){
                             }
                         }
                     }
-                }else{
-                    //700
-                }  
+                }
+                //else 700
             }
             //console.log("done checking straight, time for if drop!")
             //1st highest
             if(xResult <= x2Result && xResult <= x3Result && xResult <= x4Result){
                 if(cT.y + 50 < xResult){
-                    //console.log("xResult")
                     cT.y += 50;
                     cT.y2 += 50;
                     cT.y3 += 50;
@@ -2520,7 +2504,6 @@ function movingBlockDown(cT, sT){
                     //store to sT
                     //chose randomNext
                     //say current = Next
-                    //
                     //check if cT has anything block yaxis abover 0, if it does, then you lose, if not, proceed like normal
                     let overZero = false;
                     if(cT.y < 0){
@@ -2544,14 +2527,12 @@ function movingBlockDown(cT, sT){
                         randomShape(arrayOfTetris);
                         //check if we have a row of 11 block, to score
                         checkToScore(sT);
-                    }
-                   
+                    }                   
                 }
             }
             //2nd highest
             else if (x2Result <= xResult && x2Result <= x3Result && x2Result <= x4Result){
                 if(cT.y2 + 50 < x2Result){
-                    //console.log("x2Result")
                     cT.y += 50;
                     cT.y2 += 50;
                     cT.y3 += 50;
@@ -2560,7 +2541,6 @@ function movingBlockDown(cT, sT){
                     //store to sT
                     //chose randomNext
                     //say current = Next
-                    //
                     let overZero = false;
                     if(cT.y < 0){
                         overZero = true;
@@ -2589,7 +2569,6 @@ function movingBlockDown(cT, sT){
             //3rd highest
             else if (x3Result <= xResult && x3Result <= x2Result && x3Result <= x4Result){
                 if(cT.y3 + 50 < x3Result){
-                    //console.log("x3Result")
                     cT.y += 50;
                     cT.y2 += 50;
                     cT.y3 += 50;
@@ -2598,7 +2577,6 @@ function movingBlockDown(cT, sT){
                     //store to sT
                     //chose randomNext
                     //say current = Next
-                    //
                     let overZero = false;
                     if(cT.y < 0){
                         overZero = true;
@@ -2627,7 +2605,6 @@ function movingBlockDown(cT, sT){
             //4th highest
             else if (x4Result <= xResult && x4Result <= x2Result && x4Result <= x3Result){
                 if(cT.y4 + 50 < x4Result){
-                    //console.log("x4Result")
                     cT.y += 50;
                     cT.y2 += 50;
                     cT.y3 += 50;
@@ -2636,7 +2613,6 @@ function movingBlockDown(cT, sT){
                     //store to sT
                     //chose randomNext
                     //say current = Next
-                    //
                     let overZero = false;
                     if(cT.y < 0){
                         overZero = true;
@@ -2667,7 +2643,6 @@ function movingBlockDown(cT, sT){
             let x4 = cT.x4;
             let y4 = cT.y4;
             let x4Result = 700;
-            //console.log("x4:", cT.x4);
             if(sT.length >= 1){
                 for(let i = 0 ; i < sT.length; i++){
                     if(sT[i].x >= 0){
@@ -2675,7 +2650,6 @@ function movingBlockDown(cT, sT){
                             x4Result = sT[i].y;
                         }
                     }
-
                     if(sT[i].x2 >= 0){
                         if(sT[i].x2 == x4 && sT[i].y2 < x4Result && sT[i].y2 > y4){
                             x4Result = sT[i].y2; 
@@ -2687,26 +2661,20 @@ function movingBlockDown(cT, sT){
                             x4Result = sT[i].y3;
                         }  
                     }
-                    //console.log("sT[i].x4:",sT[i].x4)
                     if(sT[i].x4 >= 0){
                         if(sT[i].x4 == x4 && sT[i].y4 < x4Result && sT[i].y4 > y4){
                             x4Result = sT[i].y4;
                         } 
                     }
                 }
-            }else{
-                //700
             }
-            //console.log("store:", sT);
-            
-            //console.log("x4Result:", x4Result);
+        
             if(cT.y4 + 50 < x4Result){
                 cT.y += 50;
                 cT.y2 += 50;
                 cT.y3 += 50;
                 cT.y4 += 50;
             }else{
-               // console.log("already pushed! stop moving it!")
                 let overZero = false;
                 if(cT.y < 0){
                     overZero = true;
@@ -2740,12 +2708,11 @@ function movingBlockDown(cT, sT){
             let y4 = cT.y4;
             let x3Result = 700;
             let x4Result = 700;
-
             for(let i = 0; i < 2; i++){
                 if(sT.length >= 1){                
                     if (i == 0){
                         for(let j = 0 ; j < sT.length; j++){ 
-                            // loop through all the sT and all xs
+                            // loop through all the sT and all x's
                             if(sT[j].x >= 0){
                                 if(sT[j].x == x3 && sT[j].y < x3Result && sT[j].y > y3){
                                     x3Result = sT[j].y;
@@ -2769,7 +2736,7 @@ function movingBlockDown(cT, sT){
                         }
                     }else if (i == 1){
                         for(let j = 0 ; j < sT.length; j++){
-                            // loop through all the sT and all xs
+                            // loop through all the sT and all x's
                             if(sT[j].x >= 0){
                                 if(sT[j].x == x4 && sT[j].y < x4Result && sT[j].y > y4){
                                     x4Result = sT[j].y;
@@ -2796,11 +2763,8 @@ function movingBlockDown(cT, sT){
                            
                         }
                     }
-                }else{
-                    //nothing, 700
                 }
             }
-            //
 
             if(x3Result <= x4Result){
                 if(cT.y3 + 50 < x3Result){
@@ -2968,11 +2932,9 @@ function movingBlockDown(cT, sT){
                             
                         }
                     }
-                }else{
-                    // 700
                 }
             }
-            //
+
             if(x4Result <= xResult && x4Result <= x3Result){
                 if(cT.y4 + 50 < x4Result){
                     cT.y += 50;
@@ -3135,8 +3097,6 @@ function movingBlockDown(cT, sT){
                             
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -3302,8 +3262,6 @@ function movingBlockDown(cT, sT){
                             
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -3420,25 +3378,21 @@ function movingBlockDown(cT, sT){
                                     xResult = sT[j].y;
                                 }
                             }
-                            
                             if(sT[j].x2 >= 0){
                                 if(sT[j].x2 == x && sT[j].y2 < xResult && sT[j].y2 > y){
                                     xResult = sT[j].y2;
                                 }
-                            }
-                            
+                            } 
                             if(sT[j].x3 >= 0){
                                 if(sT[j].x3 == x && sT[j].y3 < xResult && sT[j].y3 > y){
                                     xResult = sT[j].y3;
                                 }
                             }
-                            
                             if(sT[j].x4 >= 0){
                                 if(sT[j].x4 == x && sT[j].y4 < xResult && sT[j].y4 > y){
                                     xResult = sT[j].y4;
                                 } 
-                            }
-                           
+                            }                   
                         }
                     }else if (i == 1){
                         for(let j = 0; j < sT.length; j++){
@@ -3468,8 +3422,6 @@ function movingBlockDown(cT, sT){
                             
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -3573,8 +3525,7 @@ function movingBlockDown(cT, sT){
                                 if(sT[j].x4 == x3 && sT[j].y4 < x3Result && sT[j].y4 > y3){
                                     x3Result = sT[j].y4;
                                 }
-                            }
-                           
+                            }    
                         }
                     }else if (i == 1){
                         for(let j = 0; j < sT.length; j++){
@@ -3582,30 +3533,24 @@ function movingBlockDown(cT, sT){
                                 if(sT[j].x == x4 && sT[j].y < x4Result && sT[j].y > y4){
                                     x4Result = sT[j].y;
                                 }
-                            }
-                            
+                            }                           
                             if(sT[j].x2 >= 0){
                                 if(sT[j].x2 == x4 && sT[j].y2 < x4Result && sT[j].y2 > y4){
                                     x4Result = sT[j].y2;
                                 }
-                            }
-                            
+                            }                    
                             if(sT[j].x3 >= 0){
                                 if(sT[j].x3 == x4 && sT[j].y3 < x4Result && sT[j].y3 > y4){
                                     x4Result = sT[j].y3;
                                 } 
-                            }
-                            
+                            }                
                             if(sT[j].x4 >= 0){
                                 if(sT[j].x4 == x4 && sT[j].y4 < x4Result && sT[j].y4 > y4){
                                     x4Result = sT[j].y4;
                                 }  
-                            }
-                            
+                            }           
                         }
                     }
-                }else{  
-                    //
                 }
             }
             //
@@ -3770,8 +3715,6 @@ function movingBlockDown(cT, sT){
                            
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -3938,8 +3881,6 @@ function movingBlockDown(cT, sT){
                            
                         }
                     }
-               }else{
-                   //700
                }
            }
            //
@@ -4107,8 +4048,6 @@ function movingBlockDown(cT, sT){
                             
                         }
                     }
-                }else {
-                    //700
                 }
             }
             //
@@ -4276,8 +4215,6 @@ function movingBlockDown(cT, sT){
                             
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -4443,8 +4380,6 @@ function movingBlockDown(cT, sT){
                             
                         }
                     }
-                }else{
-                    //
                 }
             }
             //
@@ -4604,8 +4539,6 @@ function movingBlockDown(cT, sT){
                             }   
                         }
                     }
-               }else{
-                   //700
                }
            }
            //
@@ -4758,8 +4691,6 @@ function movingBlockDown(cT, sT){
                             } 
                         }
                     }
-                }else{
-                    //
                 }
             }
             //
@@ -4945,8 +4876,6 @@ function movingBlockDown(cT, sT){
                             }  
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -5106,8 +5035,6 @@ function movingBlockDown(cT, sT){
                             }
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -5261,8 +5188,6 @@ function movingBlockDown(cT, sT){
                             } 
                         }
                     }
-                }else{
-                    //700
                 }
             }
             //
@@ -5421,8 +5346,6 @@ function movingBlockDown(cT, sT){
                             }  
                         }
                     }
-               }else {
-                   //700
                }
            }
            //
@@ -5569,29 +5492,6 @@ let gameInterval = setInterval(function gameIntervalFunction(){
 
 //step by step
 /*
--first
-    -draw the layout
-    -width is 11 block, height is 14 block
-    -50 px for 1 block
-    -250 pixel for information like what's next
-    -othe than that, it's game board
-
--variables
-    -store
-    -currentTetris
-    -nextTetris
-    -scores
-    -arrayOfTetris - you random out of this
-    -
--draw
-    -draw board
-    -draw information
-    -draw shapes
-        -4X
-        -4Y
-        -w
-        -h
-        -ctx
 -shape
     -I - 2 shapes
     -O - 1 shape
@@ -5603,14 +5503,6 @@ let gameInterval = setInterval(function gameIntervalFunction(){
 -change shape
     -https://en.wikipedia.org/wiki/Tetromino#:~:text=A%20tetromino%20is%20a%20geometric,edges%20and%20not%20the%20corners).
     -Fixed Tetrominoes
--function
-    -randomTetris() - set up next tetris to drop
-    -translateShape() - there are a range of shapes to go through
-    -draw()
-    -movingDown()
-    -evaluate() - is it 11 in a row of block
-    -movingLeftOrRight
-    -etc...
 -interval
     -1 second game
     -500 moving down
