@@ -41,3 +41,15 @@ body {
     display: block;
     margin: 0em auto;
 }
+
+
+.control--wrapper {
+    width: 50em;
+    margin: 0.5em auto;
+}
+.control--wrapper h2 {
+   font-size: 1.8em;
+}
+.control--wrapper .control {
+    font-size: 1.2em;
+}
